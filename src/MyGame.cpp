@@ -23,6 +23,9 @@ void MyGame::input(SDL_Event& event) {
         case SDLK_w:
             send(event.type == SDL_KEYDOWN ? "W_DOWN" : "W_UP");
             break;
+        case SDLK_s:
+            send(event.type == SDL_KEYDOWN ? "S_DOWN" : "S_UP");
+            break;
     }
 }
 
