@@ -9,7 +9,11 @@ void MyGame::on_receive(std::string cmd, std::vector<std::string>& args) {
             game_data.ballX = stoi(args.at(2));
             game_data.ballY = stoi(args.at(3));
         }
-    } else {
+    } 
+    
+    // new command
+    
+    else {
         std::cout << "Received: " << cmd << std::endl;
     }
 }
@@ -26,11 +30,22 @@ void MyGame::input(SDL_Event& event) {
         case SDLK_s:
             send(event.type == SDL_KEYDOWN ? "S_DOWN" : "S_UP");
             break;
+
+        case SDLK_UP:
+            send(event.type == SDL_KEYDOWN ? "UP_DOWN" : "UP_UP");
+            break;
+        case SDLK_DOWN:
+            send(event.type == SDL_KEYDOWN ? "DOWN_DOWN" : "DOWN_UP");
+            break;
+
     }
 }
 
 void MyGame::update() {
     player1.y = game_data.player1Y;
+
+    //ball.x = game_data.ballX;
+    //ball.y = game_data.ballY;
 }
 
 void MyGame::render(SDL_Renderer* renderer) {

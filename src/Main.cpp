@@ -7,6 +7,9 @@ using namespace std;
 const char* IP_NAME = "localhost";
 const Uint16 PORT = 55555;
 
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 600;
+
 bool is_running = true;
 
 MyGame* game = new MyGame();
@@ -116,7 +119,7 @@ int run_game() {
     SDL_Window* window = SDL_CreateWindow(
         "Multiplayer Pong Client",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        800, 600,
+        SCREEN_HEIGHT, SCREEN_WIDTH,
         SDL_WINDOW_SHOWN
     );
 
@@ -149,6 +152,18 @@ int main(int argc, char** argv) {
     if (SDLNet_Init() == -1) {
         printf("SDLNet_Init: %s\n", SDLNet_GetError());
         exit(2);
+    }
+
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        std::cout << "SDL could not initialise (SDL_Error): " << SDL_GetError() << std::endl;
+    }
+    else {
+        SDL_CreateWindow(
+            "SDL2 Demo",
+            SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+            SCREEN_WIDTH, SCREEN_HEIGHT,
+            SDL_WINDOW_SHOWN
+        );
     }
 
     IPaddress ip;

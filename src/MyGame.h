@@ -18,6 +18,8 @@ class MyGame {
 
     private:
         SDL_Rect player1 = { 0, 0, 20, 60 };
+        SDL_Rect player2 = { 50, 0, 20, 60 };
+        
 
     public:
         std::vector<std::string> messages;
@@ -27,6 +29,14 @@ class MyGame {
         void input(SDL_Event& event);
         void update();
         void render(SDL_Renderer* renderer);
+};
+
+class Bat {
+
+};
+
+class Ball {
+
 };
 
 #endif
