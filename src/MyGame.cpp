@@ -15,6 +15,15 @@ void MyGame::on_receive(std::string cmd, std::vector<std::string>& args) {
     
     else {
         std::cout << "Received: " << cmd << std::endl;
+
+        if (cmd == "HIT_WALL_RIGHTGAME_DATA") {
+            game_data.scoreOne++;
+            std::cout << "Player one has a score of " << game_data.scoreOne << std::endl;
+        }
+        else if (cmd == "HIT_WALL_LEFTGAME_DATA") {
+            game_data.scoreTwo++;
+            std::cout << "Player two has a score of " << game_data.scoreTwo << std::endl;
+        }
     }
 }
 
