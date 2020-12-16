@@ -14,20 +14,11 @@ static struct GameData {
     int ballY = 0;
 } game_data;
 
-class Bat {
-
-};
-
-class Ball {
-    SDL_Rect ball = { 0, 0, 20, 20 };
-};
-
 class MyGame {
 
     private:
-        SDL_Rect player1 = { 200, 0, 20, 60 };
-        SDL_Rect player2 = { 580, 0, 20, 60 };
-        SDL_Rect ball = { 0, 0, 20, 20 };
+        SDL_Rect player1 = { 0, 0, 20, 60 };
+        SDL_Rect player2 = { 50, 0, 20, 60 };
         
 
     public:
@@ -38,6 +29,14 @@ class MyGame {
         void input(SDL_Event& event);
         void update();
         void render(SDL_Renderer* renderer);
+};
+
+class Bat {
+
+};
+
+class Ball {
+
 };
 
 #endif
