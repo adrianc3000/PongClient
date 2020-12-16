@@ -9,6 +9,7 @@ const Uint16 PORT = 55555;
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
+const int USE_FIRST_AVAILABLE = -1;
 
 bool is_running = true;
 
@@ -119,7 +120,7 @@ int run_game() {
     SDL_Window* window = SDL_CreateWindow(
         "Multiplayer Pong Client",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        SCREEN_HEIGHT, SCREEN_WIDTH,
+        SCREEN_WIDTH, SCREEN_HEIGHT,
         SDL_WINDOW_SHOWN
     );
 
@@ -158,11 +159,19 @@ int main(int argc, char** argv) {
         std::cout << "SDL could not initialise (SDL_Error): " << SDL_GetError() << std::endl;
     }
     else {
-        SDL_CreateWindow(
+        auto window = SDL_CreateWindow(
             "SDL2 Demo",
-            SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-            SCREEN_WIDTH, SCREEN_HEIGHT,
+            SDL_WINDOWPOS_CENTERED,
+            SDL_WINDOWPOS_CENTERED,
+            SCREEN_WIDTH,
+            SCREEN_HEIGHT,
             SDL_WINDOW_SHOWN
+        );
+
+        auto renderer = SDL_CreateRenderer(
+            window,
+            USE_FIRST_AVAILABLE,
+            SDL_RENDERER_ACCELERATED
         );
     }
 
