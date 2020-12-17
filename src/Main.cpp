@@ -1,5 +1,6 @@
 #include "SDL_net.h"
 
+#include "SDL_ttf.h"
 #include "MyGame.h"
 
 using namespace std;
@@ -149,6 +150,12 @@ int main(int argc, char** argv) {
         exit(1);
     }
 
+    // Initialise TTF
+    if (TTF_Init() == -1) {
+        printf("TTF_Init: %s\n", SDL_GetError());
+        exit(5);
+    }
+
     // Initialize SDL_net
     if (SDLNet_Init() == -1) {
         printf("SDLNet_Init: %s\n", SDLNet_GetError());
@@ -193,6 +200,15 @@ int main(int argc, char** argv) {
 
     SDL_CreateThread(on_receive, "ConnectionReceiveThread", (void*)socket);
     SDL_CreateThread(on_send, "ConnectionSendThread", (void*)socket);
+
+    TTF_Font* font = TTF_OpenFont("assets/Raleway-Light.ttf", 16);
+
+    if (font != nullptr) {
+        std::cout << "Font is loaded" << std::endl;
+    }
+    else {
+        std::cout << "Font is not loaded" << std::endl;
+    }
 
     run_game();
 

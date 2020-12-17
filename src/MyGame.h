@@ -21,7 +21,7 @@ class Bat {
 };
 
 class Ball {
-    SDL_Rect ball = { 0, 0, 20, 20 };
+    //SDL_Rect ball = { 0, 0, 20, 20 };
 };
 
 class MyGame {
