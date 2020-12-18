@@ -14,7 +14,7 @@ const int USE_FIRST_AVAILABLE = -1;
 
 bool is_running = true;
 
-MyGame* game = new MyGame();
+MyGame* game;
 
 static int on_receive(void* socket_ptr) {
     TCPsocket socket = (TCPsocket)socket_ptr;
@@ -198,10 +198,7 @@ int main(int argc, char** argv) {
         exit(4);
     }
 
-    SDL_CreateThread(on_receive, "ConnectionReceiveThread", (void*)socket);
-    SDL_CreateThread(on_send, "ConnectionSendThread", (void*)socket);
-
-    TTF_Font* font = TTF_OpenFont("assets/Raleway-Light.ttf", 16);
+    TTF_Font* font = TTF_OpenFont("assets/Raleway-Regular.ttf", 24);
 
     if (font != nullptr) {
         std::cout << "Font is loaded" << std::endl;
@@ -209,6 +206,11 @@ int main(int argc, char** argv) {
     else {
         std::cout << "Font is not loaded" << std::endl;
     }
+
+    game = new MyGame(font);
+
+    SDL_CreateThread(on_receive, "ConnectionReceiveThread", (void*)socket);
+    SDL_CreateThread(on_send, "ConnectionSendThread", (void*)socket);
 
     run_game();
 

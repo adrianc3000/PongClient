@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 
+#include "SDL_ttf.h"
 #include "SDL.h"
 
 static struct GameData {
@@ -31,8 +32,10 @@ class MyGame {
         SDL_Rect player2 = { 580, 0, 20, 60 };
         SDL_Rect ball = { 0, 0, 20, 20 };
         
+        TTF_Font* font;
 
     public:
+        MyGame(TTF_Font* font);
         std::vector<std::string> messages;
 
         void on_receive(std::string message, std::vector<std::string>& args);

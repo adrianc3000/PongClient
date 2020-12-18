@@ -1,5 +1,8 @@
 #include "MyGame.h"
 
+MyGame::MyGame(TTF_Font* font) {
+    this->font = font;
+}
 void MyGame::on_receive(std::string cmd, std::vector<std::string>& args) {
     if (cmd == "GAME_DATA") {
         // we should have exactly 4 arguments
@@ -58,6 +61,43 @@ void MyGame::update() {
 }
 
 void MyGame::render(SDL_Renderer* renderer) {
+
+
+    SDL_Color blue_colour = { 87, 110, 224, 0 };
+    SDL_Color red_colour = { 224, 87, 87, 0};
+
+    std::string scoreOne_text = std::to_string(game_data.scoreOne);
+    std::string scoreTwo_text = std::to_string(game_data.scoreTwo);
+
+    SDL_Surface* text_surface_blue = TTF_RenderText_Blended(font, scoreOne_text.c_str(), blue_colour);
+    
+    if (text_surface_blue != nullptr) {
+        SDL_Texture* text_texture = SDL_CreateTextureFromSurface(renderer, text_surface_blue);
+        SDL_FreeSurface(text_surface_blue);
+
+        if (text_texture != nullptr) {
+            int w, h;
+            SDL_QueryTexture(text_texture, NULL, NULL, &w, &h);
+            SDL_Rect dst = { 350, 50, w, h };
+            SDL_RenderCopy(renderer, text_texture, NULL, &dst);
+        }
+    }
+
+    SDL_Surface* text_surface_red = TTF_RenderText_Blended(font, scoreTwo_text.c_str(), red_colour);
+
+    if (text_surface_red != nullptr) {
+        SDL_Texture* text_texture = SDL_CreateTextureFromSurface(renderer, text_surface_red);
+        SDL_FreeSurface(text_surface_red);
+
+        if (text_texture != nullptr) {
+            int w, h;
+            SDL_QueryTexture(text_texture, NULL, NULL, &w, &h);
+            SDL_Rect dst = { 450, 50, w, h };
+            SDL_RenderCopy(renderer, text_texture, NULL, &dst);
+        }
+    }
+
+    
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderDrawRect(renderer, &player1);
     SDL_RenderDrawRect(renderer, &player2);
