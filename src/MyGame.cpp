@@ -99,18 +99,32 @@ void MyGame::render(SDL_Renderer* renderer) {
     }
 
     SDL_RenderDrawRect(renderer, &ball);
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderDrawRect(renderer, &player1);
     SDL_RenderDrawRect(renderer, &player2);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-    int texture_width = 50;
-    int texture_height = 50;
+    int ball_width = 50;
+    int ball_height = 50;
 
-    SDL_Rect test = { game_data.ballX - 17.5, game_data.ballY - 17.5, texture_width, texture_height };
+    SDL_Rect drawBall = { game_data.ballX - 17.5, game_data.ballY - 17.5, ball_width, ball_height };
+    auto imgBall = IMG_Load("assets/ball.png");
+    auto textureBall = SDL_CreateTextureFromSurface(renderer, imgBall);
+    SDL_RenderCopy(renderer, textureBall, NULL, &drawBall);
 
-    auto image = IMG_Load("assets/ball.png");
-    auto texture = SDL_CreateTextureFromSurface(renderer, image);
 
-    SDL_RenderCopy(renderer, texture, NULL, &test);
+    int bat_width = 20;
+    int bat_height = 60;
+
+    SDL_Rect drawP1 = { 200, game_data.player1Y, bat_width, bat_height };
+    auto imgP1 = IMG_Load("assets/blue.png");
+    auto textureP1 = SDL_CreateTextureFromSurface(renderer, imgP1);
+    SDL_RenderCopy(renderer, textureP1, NULL, &drawP1);
+
+
+    SDL_Rect drawP2 = { 580, game_data.player2Y, bat_width, bat_height };
+    auto imgP2 = IMG_Load("assets/red.png");
+    auto textureP2 = SDL_CreateTextureFromSurface(renderer, imgP2);
+    SDL_RenderCopy(renderer, textureP2, NULL, &drawP2);
+
     SDL_RenderPresent(renderer);
 }
