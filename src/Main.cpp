@@ -1,6 +1,7 @@
 #include "SDL_net.h"
 
 #include "SDL_ttf.h"
+#include "SDL_image.h"
 #include "MyGame.h"
 
 using namespace std;
@@ -166,6 +167,7 @@ int main(int argc, char** argv) {
         std::cout << "SDL could not initialise (SDL_Error): " << SDL_GetError() << std::endl;
     }
     else {
+        /*
         auto window = SDL_CreateWindow(
             "SDL2 Demo",
             SDL_WINDOWPOS_CENTERED,
@@ -180,6 +182,26 @@ int main(int argc, char** argv) {
             USE_FIRST_AVAILABLE,
             SDL_RENDERER_ACCELERATED
         );
+
+        int texture_width = 50;
+        int texture_height = 50;
+
+        SDL_Rect test = { game_data.ballX, game_data.ballY, texture_width, texture_height };
+
+        auto texture = SDL_CreateTextureFromSurface(renderer, image);
+        SDL_RenderCopy(renderer, texture, USE_ENTIRE_TEXTURE, &test);
+
+        SDL_RenderPresent(renderer);
+        */
+
+        auto image = IMG_Load("assets/ball.png");
+
+        if (image != nullptr) {
+            std::cout << "Image is loaded" << std::endl;
+        }
+        else {
+            std::cout << "Image is not loaded" << std::endl;
+        }
     }
 
     IPaddress ip;

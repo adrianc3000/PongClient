@@ -1,4 +1,5 @@
 #include "MyGame.h"
+#include "SDL_image.h"
 
 MyGame::MyGame(TTF_Font* font) {
     this->font = font;
@@ -97,10 +98,19 @@ void MyGame::render(SDL_Renderer* renderer) {
         }
     }
 
-    
+    SDL_RenderDrawRect(renderer, &ball);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderDrawRect(renderer, &player1);
     SDL_RenderDrawRect(renderer, &player2);
 
-    SDL_RenderDrawRect(renderer, &ball);
+    int texture_width = 50;
+    int texture_height = 50;
+
+    SDL_Rect test = { game_data.ballX - 17.5, game_data.ballY - 17.5, texture_width, texture_height };
+
+    auto image = IMG_Load("assets/ball.png");
+    auto texture = SDL_CreateTextureFromSurface(renderer, image);
+
+    SDL_RenderCopy(renderer, texture, NULL, &test);
+    SDL_RenderPresent(renderer);
 }
