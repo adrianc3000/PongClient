@@ -2,6 +2,7 @@
 
 #include "SDL_ttf.h"
 #include "SDL_image.h"
+#include "SDL_mixer.h"
 #include "MyGame.h"
 
 using namespace std;
@@ -163,37 +164,11 @@ int main(int argc, char** argv) {
         exit(2);
     }
 
+    // Initialise SDL_video
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         std::cout << "SDL could not initialise (SDL_Error): " << SDL_GetError() << std::endl;
     }
     else {
-        /*
-        auto window = SDL_CreateWindow(
-            "SDL2 Demo",
-            SDL_WINDOWPOS_CENTERED,
-            SDL_WINDOWPOS_CENTERED,
-            SCREEN_WIDTH,
-            SCREEN_HEIGHT,
-            SDL_WINDOW_SHOWN
-        );
-
-        auto renderer = SDL_CreateRenderer(
-            window,
-            USE_FIRST_AVAILABLE,
-            SDL_RENDERER_ACCELERATED
-        );
-
-        int texture_width = 50;
-        int texture_height = 50;
-
-        SDL_Rect test = { game_data.ballX, game_data.ballY, texture_width, texture_height };
-
-        auto texture = SDL_CreateTextureFromSurface(renderer, image);
-        SDL_RenderCopy(renderer, texture, USE_ENTIRE_TEXTURE, &test);
-
-        SDL_RenderPresent(renderer);
-        */
-
         auto image = IMG_Load("assets/ball.png");
 
         if (image != nullptr) {
@@ -202,6 +177,11 @@ int main(int argc, char** argv) {
         else {
             std::cout << "Image is not loaded" << std::endl;
         }
+    }    
+    // Initialise audio
+    if (SDL_Init(SDL_INIT_AUDIO) == -1) {
+        printf("SDL_Init: %s\n", SDL_GetError());
+        exit(1);
     }
 
     IPaddress ip;
@@ -220,6 +200,7 @@ int main(int argc, char** argv) {
         exit(4);
     }
 
+    // Initialise font
     TTF_Font* font = TTF_OpenFont("assets/Raleway-Regular.ttf", 24);
 
     if (font != nullptr) {
@@ -229,8 +210,32 @@ int main(int argc, char** argv) {
         std::cout << "Font is not loaded" << std::endl;
     }
 
-    game = new MyGame(font);
 
+
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) == -1) {
+        printf("Mix_OpenAudio: %s\n", Mix_GetError());
+        exit(2);
+    }
+    else {
+        std::cout << "Audio is opened" << std::endl;    
+    }
+
+    Mix_Chunk* sound = Mix_LoadWAV("assets/background.wav");
+
+    if (sound != nullptr) {
+        std::cout << "Sound is loaded" << std::endl;
+    } else {
+        std::cout << "Sound is not loaded" << std::endl;
+        printf("Mix_LoadWAV: %s\n", Mix_GetError());
+    }
+    Mix_Volume(-1, 30);
+
+    if (Mix_PlayChannel(-1, sound, -1) == -1) {
+        printf("Mix_PlayChannel: %s \n", Mix_GetError());
+    }
+
+    game = new MyGame(font);
+    
     SDL_CreateThread(on_receive, "ConnectionReceiveThread", (void*)socket);
     SDL_CreateThread(on_send, "ConnectionSendThread", (void*)socket);
 
