@@ -1,6 +1,5 @@
 #include "MyGame.h"
 #include "SDL_image.h"
-#include "SDL_mixer.h"
 
 MyGame::MyGame(TTF_Font* font) {
     this->font = font;
@@ -22,18 +21,12 @@ void MyGame::on_receive(std::string cmd, std::vector<std::string>& args) {
         std::cout << "Received: " << cmd << std::endl;
 
         if (cmd == "HIT_WALL_RIGHTGAME_DATA") {
-            game_info.scoreOne++;
-            std::cout << "Player one has a score of " << game_info.scoreOne << std::endl;
+            game_data.scoreOne++;
+            std::cout << "Player one has a score of " << game_data.scoreOne << std::endl;
         }
         else if (cmd == "HIT_WALL_LEFTGAME_DATA") {
-            game_info.scoreTwo++;
-            std::cout << "Player two has a score of " << game_info.scoreTwo << std::endl;
-        }
-        else if (cmd == "BALL_HIT_BAT1" || cmd == "BALL_HIT_BAT2" || cmd == "HIT_WALL_DOWN" || cmd == "HIT_WALL_UP") {
-            Mix_Chunk* sound = Mix_LoadWAV("assets/explosion.wav");
-            if (Mix_PlayChannel(-1, sound, 0) == -1) {
-                printf("Mix_PlayChannel: %s \n", Mix_GetError());
-            }
+            game_data.scoreTwo++;
+            std::cout << "Player two has a score of " << game_data.scoreTwo << std::endl;
         }
     }
 }
@@ -74,8 +67,8 @@ void MyGame::render(SDL_Renderer* renderer) {
     SDL_Color blue_colour = { 87, 110, 224, 0 };
     SDL_Color red_colour = { 224, 87, 87, 0};
 
-    std::string scoreOne_text = std::to_string(game_info.scoreOne);
-    std::string scoreTwo_text = std::to_string(game_info.scoreTwo);
+    std::string scoreOne_text = std::to_string(game_data.scoreOne);
+    std::string scoreTwo_text = std::to_string(game_data.scoreTwo);
 
     SDL_Surface* text_surface_blue = TTF_RenderText_Blended(font, scoreOne_text.c_str(), blue_colour);
     
@@ -89,7 +82,6 @@ void MyGame::render(SDL_Renderer* renderer) {
             SDL_Rect dst = { 350, 50, w, h };
             SDL_RenderCopy(renderer, text_texture, NULL, &dst);
         }
-        SDL_DestroyTexture(text_texture);
     }
 
     SDL_Surface* text_surface_red = TTF_RenderText_Blended(font, scoreTwo_text.c_str(), red_colour);
@@ -104,7 +96,6 @@ void MyGame::render(SDL_Renderer* renderer) {
             SDL_Rect dst = { 450, 50, w, h };
             SDL_RenderCopy(renderer, text_texture, NULL, &dst);
         }
-        SDL_DestroyTexture(text_texture);
     }
 
     SDL_RenderDrawRect(renderer, &ball);
@@ -119,6 +110,7 @@ void MyGame::render(SDL_Renderer* renderer) {
     auto imgBall = IMG_Load("assets/ball.png");
     auto textureBall = SDL_CreateTextureFromSurface(renderer, imgBall);
     SDL_RenderCopy(renderer, textureBall, NULL, &drawBall);
+
 
     int bat_width = 20;
     int bat_height = 60;
@@ -135,10 +127,4 @@ void MyGame::render(SDL_Renderer* renderer) {
     SDL_RenderCopy(renderer, textureP2, NULL, &drawP2);
 
     SDL_RenderPresent(renderer);
-    SDL_FreeSurface(imgBall);
-    SDL_FreeSurface(imgP1);
-    SDL_FreeSurface(imgP2);
-    SDL_DestroyTexture(textureBall);
-    SDL_DestroyTexture(textureP1);
-    SDL_DestroyTexture(textureP2);
 }

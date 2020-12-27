@@ -13,12 +13,9 @@ static struct GameData {
     int player2Y = 0;
     int ballX = 0;
     int ballY = 0;
-} game_data;
-
-static struct GameInfo {
     int scoreOne = 0;
     int scoreTwo = 0;
-} game_info;
+} game_data;
 
 class Bat {
 
