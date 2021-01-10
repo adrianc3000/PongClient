@@ -18,15 +18,10 @@ static struct GameData {
 static struct GameInfo {
     int scoreOne = 0;
     int scoreTwo = 0;
-} game_info;
-
-class Bat {
-
-};
-
-class Ball {
-    //SDL_Rect ball = { 0, 0, 20, 20 };
-};
+    int gameInput = 0;
+    const int screenWidth = 800;
+    const int screenHeight = 600;
+} game_info;    
 
 class MyGame {
 

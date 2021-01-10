@@ -7,7 +7,7 @@
 
 using namespace std;
 
-const char* IP_NAME = "localhost";
+const char* IP_NAME = "192.168.0.36";
 const Uint16 PORT = 55555;
 
 const int SCREEN_WIDTH = 800;
@@ -210,8 +210,7 @@ int main(int argc, char** argv) {
         std::cout << "Font is not loaded" << std::endl;
     }
 
-
-
+    // Initialise OpenAudio
     if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) == -1) {
         printf("Mix_OpenAudio: %s\n", Mix_GetError());
         exit(2);
@@ -219,8 +218,15 @@ int main(int argc, char** argv) {
     else {
         std::cout << "Audio is opened" << std::endl;    
     }
+    game = new MyGame(font);
 
-    Mix_Chunk* sound = Mix_LoadWAV("assets/background.wav");
+    // Create server messages to send + receive
+    SDL_CreateThread(on_receive, "ConnectionReceiveThread", (void*)socket);
+    SDL_CreateThread(on_send, "ConnectionSendThread", (void*)socket);
+    
+    // Preload sound files to check for nullptr
+    Mix_Chunk* sound = Mix_LoadWAV("assets/background2.wav");
+    Mix_Volume(-1, 30);
 
     if (sound != nullptr) {
         std::cout << "Sound is loaded" << std::endl;
@@ -228,19 +234,11 @@ int main(int argc, char** argv) {
         std::cout << "Sound is not loaded" << std::endl;
         printf("Mix_LoadWAV: %s\n", Mix_GetError());
     }
-    Mix_Volume(-1, 30);
-
     if (Mix_PlayChannel(-1, sound, -1) == -1) {
         printf("Mix_PlayChannel: %s \n", Mix_GetError());
     }
 
-    game = new MyGame(font);
-    
-    SDL_CreateThread(on_receive, "ConnectionReceiveThread", (void*)socket);
-    SDL_CreateThread(on_send, "ConnectionSendThread", (void*)socket);
-
     run_game();
-
     delete game;
 
     // Close connection to the server

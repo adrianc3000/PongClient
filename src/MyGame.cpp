@@ -15,7 +15,6 @@ void MyGame::on_receive(std::string cmd, std::vector<std::string>& args) {
             game_data.ballY = stoi(args.at(3));
         }
     } 
-    
     // new command
     
     else {
@@ -29,17 +28,38 @@ void MyGame::on_receive(std::string cmd, std::vector<std::string>& args) {
             game_info.scoreTwo++;
             std::cout << "Player two has a score of " << game_info.scoreTwo << std::endl;
         }
-        else if (cmd == "BALL_HIT_BAT1" || cmd == "BALL_HIT_BAT2" || cmd == "HIT_WALL_DOWN" || cmd == "HIT_WALL_UP") {
-            Mix_Chunk* sound = Mix_LoadWAV("assets/explosion.wav");
-            if (Mix_PlayChannel(-1, sound, 0) == -1) {
+        
+        if (cmd == "BALL_HIT_BAT1" || cmd == "BALL_HIT_BAT2" || cmd == "HIT_WALL_DOWN" || cmd == "HIT_WALL_UP") {
+            Mix_Chunk* soundA = Mix_LoadWAV("assets/explosion.wav");
+            if (Mix_PlayChannel(-1, soundA, 0) == -1) {
                 printf("Mix_PlayChannel: %s \n", Mix_GetError());
             }
         }
+        else if (cmd == "HIT_WALL_RIGHTGAME_DATA" || cmd == "HIT_WALL_LEFTGAME_DATA") {
+            Mix_Chunk* soundB = Mix_LoadWAV("assets/ice.wav");
+            if (Mix_PlayChannel(-1, soundB, 0) == -1) {
+                printf("Mix_PlayChannel: %s \n", Mix_GetError());
+            }
+        }
+        //game_info.wallHit = 0;
     }
 }
 
 void MyGame::send(std::string message) {
-    messages.push_back(message);
+    
+    if (game_info.gameInput != 1) {
+        if (message == "W_DOWN" || message == "W_UP" || message == "S_DOWN" || message == "S_UP") {
+            messages.push_back(message);
+            game_info.gameInput = 2;
+        }
+    }
+    if (game_info.gameInput != 2) {
+        if (message == "I_DOWN" || message == "I_UP" || message == "K_DOWN" || message == "K_UP") {
+            messages.push_back(message);
+            game_info.gameInput = 1;
+        }
+    }
+    //messages.push_back(message);
 }
 
 void MyGame::input(SDL_Event& event) {
@@ -50,14 +70,12 @@ void MyGame::input(SDL_Event& event) {
         case SDLK_s:
             send(event.type == SDL_KEYDOWN ? "S_DOWN" : "S_UP");
             break;
-
         case SDLK_i:
             send(event.type == SDL_KEYDOWN ? "I_DOWN" : "I_UP");
             break;
         case SDLK_k:
             send(event.type == SDL_KEYDOWN ? "K_DOWN" : "K_UP");
             break;
-
     }
 }
 
@@ -69,7 +87,21 @@ void MyGame::update() {
 }
 
 void MyGame::render(SDL_Renderer* renderer) {
+    
+    int ball_width = 50;
+    int ball_height = 50;
+    int bat_width = 20;
+    int bat_height = 60;
 
+    SDL_Rect wall = { 0, 0, game_info.screenWidth, game_info.screenHeight };
+    auto imgWall = IMG_Load("assets/wall.png");
+    auto textureWall = SDL_CreateTextureFromSurface(renderer, imgWall);
+    SDL_RenderCopy(renderer, textureWall, NULL, &wall);
+
+    SDL_Rect drawBall = { game_data.ballX - 17.5, game_data.ballY - 17.5, ball_width, ball_height };
+    auto imgBall = IMG_Load("assets/ball.png");
+    auto textureBall = SDL_CreateTextureFromSurface(renderer, imgBall);
+    SDL_RenderCopy(renderer, textureBall, NULL, &drawBall);
 
     SDL_Color blue_colour = { 87, 110, 224, 0 };
     SDL_Color red_colour = { 224, 87, 87, 0};
@@ -86,7 +118,7 @@ void MyGame::render(SDL_Renderer* renderer) {
         if (text_texture != nullptr) {
             int w, h;
             SDL_QueryTexture(text_texture, NULL, NULL, &w, &h);
-            SDL_Rect dst = { 350, 50, w, h };
+            SDL_Rect dst = { 350, 20, w, h };
             SDL_RenderCopy(renderer, text_texture, NULL, &dst);
         }
         SDL_DestroyTexture(text_texture);
@@ -101,33 +133,16 @@ void MyGame::render(SDL_Renderer* renderer) {
         if (text_texture != nullptr) {
             int w, h;
             SDL_QueryTexture(text_texture, NULL, NULL, &w, &h);
-            SDL_Rect dst = { 450, 50, w, h };
+            SDL_Rect dst = { 450, 20, w, h };
             SDL_RenderCopy(renderer, text_texture, NULL, &dst);
         }
         SDL_DestroyTexture(text_texture);
     }
 
-    SDL_RenderDrawRect(renderer, &ball);
-    SDL_RenderDrawRect(renderer, &player1);
-    SDL_RenderDrawRect(renderer, &player2);
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-
-    int ball_width = 50;
-    int ball_height = 50;
-
-    SDL_Rect drawBall = { game_data.ballX - 17.5, game_data.ballY - 17.5, ball_width, ball_height };
-    auto imgBall = IMG_Load("assets/ball.png");
-    auto textureBall = SDL_CreateTextureFromSurface(renderer, imgBall);
-    SDL_RenderCopy(renderer, textureBall, NULL, &drawBall);
-
-    int bat_width = 20;
-    int bat_height = 60;
-
     SDL_Rect drawP1 = { 200, game_data.player1Y, bat_width, bat_height };
     auto imgP1 = IMG_Load("assets/blue.png");
     auto textureP1 = SDL_CreateTextureFromSurface(renderer, imgP1);
     SDL_RenderCopy(renderer, textureP1, NULL, &drawP1);
-
 
     SDL_Rect drawP2 = { 580, game_data.player2Y, bat_width, bat_height };
     auto imgP2 = IMG_Load("assets/red.png");
@@ -138,7 +153,9 @@ void MyGame::render(SDL_Renderer* renderer) {
     SDL_FreeSurface(imgBall);
     SDL_FreeSurface(imgP1);
     SDL_FreeSurface(imgP2);
+    SDL_FreeSurface(imgWall);
     SDL_DestroyTexture(textureBall);
     SDL_DestroyTexture(textureP1);
     SDL_DestroyTexture(textureP2);
+    SDL_DestroyTexture(textureWall);
 }
